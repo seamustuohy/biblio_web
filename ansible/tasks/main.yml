@@ -1,0 +1,130 @@
+- name: Create Users
+  user:
+    name: "{{ biblio_web_service_user }}"
+    state: present
+    register: bw_user_details
+
+- name: Create base directory
+  file:
+    path: "{{ biblio_base_dir_path }}"
+    state: directory
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0755'
+
+- name: Create the initial virtualenv
+  become_user: "{{ biblio_web_service_user }}"
+  command:
+    cmd: python3 -m venv "{{ biblio_web_venv_path }}"
+    creates: "{{ biblio_web_venv_path }}"
+
+- name: Install pip setup dependencies
+  become_user: "{{ biblio_web_service_user }}"
+  pip:
+    name:
+      - setuptools
+      - wheel
+    executable: pip3
+    virtualenv: "{{ biblio_web_venv_path }}"
+
+- name: Install Django Dependencies
+  become_user: "{{ biblio_web_service_user }}"
+  pip:
+    name:
+      - django
+      - djangorestframework
+      - django-widget-tweaks
+    executable: pip3
+    virtualenv: "{{ biblio_web_venv_path }}"
+
+- name: Install biblio dependencies
+  become_user: "{{ biblio_web_service_user }}"
+  pip:
+    name:
+      - pyexiftool
+    executable: pip3
+    virtualenv: "{{ biblio_web_venv_path }}"
+
+- name: Install Gunicorn
+  become_user: "{{ biblio_web_service_user }}"
+  pip:
+    name:
+      - gunicorn
+    executable: pip3
+    virtualenv: "{{ biblio_web_venv_path }}"
+
+# Create biblio tarball with `python3 setup.py sdist` in the biblio folder
+# Copy over to `ansible/files/Biblio.tar.gz` in the biblio_web folder when done.
+- name: Copy over biblio tarball
+  become_user: "{{ biblio_web_service_user }}"
+  copy:
+    src: "files/Biblio.tar.gz"
+    dest: "/tmp/Biblio.tar.gz"
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0644'
+
+- name: Install biblio from local tarball package
+  become_user: "{{ biblio_web_service_user }}"
+  pip:
+    name: "file:///tmp/Biblio.tar.gz"
+    executable: pip3
+    virtualenv: "{{ biblio_web_venv_path }}"
+
+# - name: Install Biblio from pip package
+
+# - name: Install Biblio Web
+
+## INSTALL BIBLIO WEB FROM GIT REPO
+- name: Create temporary directory for bibilio repo
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: temp
+  register: bibweb_repo_temp
+
+- name: Download biblio web to server from git
+  become_user: "{{ biblio_web_service_user }}"
+  git:
+    repo: https://github.com/seamustuohy/biblio_web.git
+    dest: "{{ bibweb_repo_temp.path }}"
+
+- name: Remove existing biblio_web directory
+  ansible.builtin.file:
+    path: "{{ biblio_web_dir_path }}"
+    state: absent
+  when:  biblio_web_dir_path is defined and biblio_web_dir_path != ""
+
+- name: Copy biblio_web to service
+  become_user: "{{ biblio_web_service_user }}"
+  copy:
+    src: "{{ bibweb_repo_temp.path }}/biblio_web"
+    dest: "{{ biblio_web_dir_path }}"
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    remote_src: yes
+
+- name: Remove tmp biblio_web git-repo
+  ansible.builtin.file:
+    path: "{{ bibweb_repo_temp.path }}"
+    state: absent
+  when: bibweb_repo_temp.path is defined
+
+- name: Copy gunicorn config to server
+  template:
+    src: gunicorn.prod.py.j2
+    dest: "{{ gunicorn_config_path }}"
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0644'
+
+- name: Configure Caddy
+
+- name: Create biblio web init scripts
+  template:
+    src: biblio_web.service.j2
+    dest: "/etc/systemd/system/biblio_web.service"
+    owner: "root"
+    group: "root"
+    mode: '0644'
+  notify:
+    - Restart biblio_web

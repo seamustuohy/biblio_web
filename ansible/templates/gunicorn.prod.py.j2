@@ -1,0 +1,20 @@
+"""Gunicorn *production* config file"""
+
+import multiprocessing
+
+# Biblio_Web's WSGI application path
+wsgi_app = "biblio_web.wsgi:application"
+# The number of worker processes for handling requests
+# Make the number of workers a function of the VM’s CPU count instead of hard-coding it.
+workers = multiprocessing.cpu_count() * 2 + 1
+# The socket to bind
+bind = "{{ gunicorn_ip }}:{{ gunicorn_socket }}"
+# Write access and error info to logfiles
+accesslog = "{{ gunicorn_access_log }}"
+errorlog = "{{ gunicorn_error_log }}"
+# Redirect stdout/stderr to log file
+capture_output = True
+# PID file so you can easily fetch process ID
+pidfile = "{{ gunicorn_pid_path }}"
+# Don't daemonize the Gunicorn process (detach & enter background) because it is run by an init script
+daemon = False
