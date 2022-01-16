@@ -4,9 +4,17 @@
     state: present
   register: bw_user_details
 
-- name: Create base directory
+- name: Create base srv directory
   file:
     path: "{{ biblio_base_dir_path }}"
+    state: directory
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0755'
+
+- name: Create base etc directory
+  file:
+    path: "{{ biblio_etc_dir_path }}"
     state: directory
     owner: "{{ biblio_web_service_user }}"
     group: "{{ bw_user_details.group }}"

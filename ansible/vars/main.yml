@@ -1,6 +1,7 @@
 # system installation and setup details
 biblio_web_service_user: "bibweb"
 biblio_base_dir_path: "/srv/biblio_web"
+biblio_etc_dir_path: "/etc/biblio_web/"
 biblio_web_venv_path: "{{ biblio_base_dir_path }}/virtualenv"
 biblio_web_env_file: "/etc/biblio_web/biblio_service.env"
 biblio_web_dir_path: "{{ biblio_base_dir_path }}/biblio_web"
@@ -31,3 +32,9 @@ biblio_web_sec_protect_system: true
 biblio_web_sec_private_devices: true
 biblio_web_sec_private_tmp: true
 biblio_web_systemd_capabilities: "CAP_NET_BIND_SERVICE"
+## Init env variables to pass to biblio_web process
+pass_environment_vars:
+  - BW_SECRET_KEY
+  - BiblioArchiveDir
+  - BiblioDBPath
+  - DJANGO_SETTINGS_MODULE
