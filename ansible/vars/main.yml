@@ -16,11 +16,14 @@ biblio_web_secret_key: ""
 
 # Init script details
 ## Gunicorn webserver configuration details
-gunicorn_pid_path: "/var/run/gunicorn/prod.pid"
-gunicorn_error_log: "/var/log/gunicorn/error.log"
-gunicorn_access_log: "/var/log/gunicorn/access.log"
+gunicorn_log_dir: "/var/log/gunicorn"
+gunicorn_pid_dir: "/var/run/gunicorn"
+gunicorn_pid_path: "{{ gunicorn_pid_dir }}/prod.pid"
+gunicorn_error_log: "{{ gunicorn_log_dir }}/error.log"
+gunicorn_access_log: "{{ gunicorn_log_dir }}/access.log"
 gunicorn_ip: "0.0.0.0"
-gunicorn_socket: "8000"
+gunicorn_socket: "9630"
+gunicorn_config_dir: "/etc/biblio_web/"
 gunicorn_config_path: "/etc/biblio_web/gunicorn.prod.py"
 ## init capabilities and permissions
 biblio_web_sec_protect_home: true

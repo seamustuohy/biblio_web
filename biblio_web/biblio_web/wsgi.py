@@ -11,8 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'biblio.settings')
-os.environ.setdefault('BiblioDBPath', '/home/recoll/bibliography.db')
-os.environ.setdefault('BiblioArchiveDir', '/var/lib/archive')
+#os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'biblio_web.settings')
+#os.environ.setdefault('BiblioDBPath', '/home/recoll/bibliography.db')
+#os.environ.setdefault('BiblioArchiveDir', '/var/lib/archive')
 
 application = get_wsgi_application()

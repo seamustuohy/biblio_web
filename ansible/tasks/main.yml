@@ -2,7 +2,7 @@
   user:
     name: "{{ biblio_web_service_user }}"
     state: present
-    register: bw_user_details
+  register: bw_user_details
 
 - name: Create base directory
   file:
@@ -12,51 +12,71 @@
     group: "{{ bw_user_details.group }}"
     mode: '0755'
 
-- name: Create the initial virtualenv
-  become_user: "{{ biblio_web_service_user }}"
-  command:
-    cmd: python3 -m venv "{{ biblio_web_venv_path }}"
-    creates: "{{ biblio_web_venv_path }}"
+- name: ensure python venv exists
+  apt:
+    name:
+      - python3
+      - python3-pip
+
+- name: Install virtualenv via pip
+  pip:
+    name: virtualenv
+    executable: pip3
+
+# - name: Create the initial virtualenv
+#   become_user: "{{ biblio_web_service_user }}"
+#   command:
+#     cmd: python3 -m venv "{{ biblio_web_venv_path }}"
+#     creates: "{{ biblio_web_venv_path }}"
 
 - name: Install pip setup dependencies
   become_user: "{{ biblio_web_service_user }}"
+  become: yes
   pip:
     name:
       - setuptools
       - wheel
-    executable: pip3
+    # executable: pip3
     virtualenv: "{{ biblio_web_venv_path }}"
+    virtualenv_python: python3
 
 - name: Install Django Dependencies
   become_user: "{{ biblio_web_service_user }}"
+  become: yes
   pip:
     name:
       - django
       - djangorestframework
       - django-widget-tweaks
-    executable: pip3
+    # executable: pip3
     virtualenv: "{{ biblio_web_venv_path }}"
+    virtualenv_python: python3
 
 - name: Install biblio dependencies
   become_user: "{{ biblio_web_service_user }}"
+  become: yes
   pip:
     name:
       - pyexiftool
-    executable: pip3
+    # executable: pip3
     virtualenv: "{{ biblio_web_venv_path }}"
+    virtualenv_python: python3
 
 - name: Install Gunicorn
   become_user: "{{ biblio_web_service_user }}"
+  become: yes
   pip:
     name:
       - gunicorn
-    executable: pip3
+    # executable: pip3
     virtualenv: "{{ biblio_web_venv_path }}"
+    virtualenv_python: python3
 
 # Create biblio tarball with `python3 setup.py sdist` in the biblio folder
 # Copy over to `ansible/files/Biblio.tar.gz` in the biblio_web folder when done.
 - name: Copy over biblio tarball
   become_user: "{{ biblio_web_service_user }}"
+  become: yes
   copy:
     src: "files/Biblio.tar.gz"
     dest: "/tmp/Biblio.tar.gz"
@@ -66,10 +86,12 @@
 
 - name: Install biblio from local tarball package
   become_user: "{{ biblio_web_service_user }}"
+  become: yes
   pip:
     name: "file:///tmp/Biblio.tar.gz"
-    executable: pip3
+    # executable: pip3
     virtualenv: "{{ biblio_web_venv_path }}"
+    virtualenv_python: python3
 
 # - name: Install Biblio from pip package
 
@@ -83,7 +105,6 @@
   register: bibweb_repo_temp
 
 - name: Download biblio web to server from git
-  become_user: "{{ biblio_web_service_user }}"
   git:
     repo: https://github.com/seamustuohy/biblio_web.git
     dest: "{{ bibweb_repo_temp.path }}"
@@ -95,7 +116,6 @@
   when:  biblio_web_dir_path is defined and biblio_web_dir_path != ""
 
 - name: Copy biblio_web to service
-  become_user: "{{ biblio_web_service_user }}"
   copy:
     src: "{{ bibweb_repo_temp.path }}/biblio_web"
     dest: "{{ biblio_web_dir_path }}"
@@ -109,7 +129,19 @@
     state: absent
   when: bibweb_repo_temp.path is defined
 
+- name: Create base directory
+  become_user: "{{ biblio_web_service_user }}"
+  become: yes
+  file:
+    path: "{{ gunicorn_config_dir }}"
+    state: directory
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0755'
+
 - name: Copy gunicorn config to server
+  become_user: "{{ biblio_web_service_user }}"
+  become: yes
   template:
     src: gunicorn.prod.py.j2
     dest: "{{ gunicorn_config_path }}"
@@ -117,7 +149,23 @@
     group: "{{ bw_user_details.group }}"
     mode: '0644'
 
-- name: Configure Caddy
+- name: Create log directory
+  file:
+    path: "{{ gunicorn_log_dir }}"
+    state: directory
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0755'
+
+- name: Create run directory
+  file:
+    path: "{{ gunicorn_pid_dir }}"
+    state: directory
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0755'
+
+# - name: Configure Caddy
 
 - name: Create biblio web init scripts
   template:
@@ -128,3 +176,14 @@
     mode: '0644'
   notify:
     - Restart biblio_web
+
+
+- name: Copy gunicorn env vars
+  become_user: "{{ biblio_web_service_user }}"
+  become: yes
+  template:
+    src: bw_service_env_vars.j2
+    dest: "{{ biblio_web_env_file }}"
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0644'
