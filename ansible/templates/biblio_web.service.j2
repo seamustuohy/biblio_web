@@ -43,7 +43,7 @@ ProtectHome={{ biblio_web_sec_protect_home }}
 ProtectSystem={{ biblio_web_sec_protect_system }}
 ; Except the directories that we need to actually run this thing.
 ; This merely retains r/w access rights, it does not add any new. Must still be writable on the host! (So, make sure you have all the permissions set right!)
-ReadWriteDirectories={{ biblio_dir_path }} {{ biblio_archive_dir_path }} {{ biblio_web_dir_path }} {{ biblio_base_dir_path }}
+ReadWriteDirectories= {{ biblio_archive_dir_path }} {{ biblio_web_dir_path }} {{ biblio_base_dir_path }} {{ biblio_etc_dir_path }}
 
 CapabilityBoundingSet={{ biblio_web_systemd_capabilities }}
 AmbientCapabilities={{ biblio_web_systemd_capabilities }}

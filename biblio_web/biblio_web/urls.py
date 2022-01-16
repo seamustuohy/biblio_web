@@ -13,9 +13,28 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path
+from django.urls import path, include
 from update_info import views
+import os.environ
 
-urlpatterns = [
+
+# Get a URL prefix if it exists
+try:
+    PREFIX = os.environ["BW_URL_PREFIX"]
+    if PREFIX == "":
+        PREFIX = None
+except KeyError as e:
+    raise RuntimeError("Could not find a SECRET_KEY in environment") from e
+
+bw_patterns = [
     path('update_doc_info/', views.UpdateForm, name='update_doc_info')
 ]
+
+if PREFIX is None:
+    urlpatterns = bw_patterns
+else:
+    if PREFIX.endswith('/') is False:
+        PREFIX += "/"
+    urlpatterns = [
+        path(PREFIX, include(bw_patterns))
+    ]

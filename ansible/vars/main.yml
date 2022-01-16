@@ -5,14 +5,14 @@ biblio_etc_dir_path: "/etc/biblio_web/"
 biblio_web_venv_path: "{{ biblio_base_dir_path }}/virtualenv"
 biblio_web_env_file: "/etc/biblio_web/biblio_service.env"
 biblio_web_dir_path: "{{ biblio_base_dir_path }}/biblio_web"
-biblio_archive_dir_path: ""
+# biblio_archive_dir_path: ""
 
-# Biblio library details
-biblio_db_path: ""
-biblio_dir_path: ""
+## Biblio library details
+# biblio_db_path: ""
+# biblio_dir_path: ""
 
 # Django App env vars
-biblio_web_secret_key: ""
+# biblio_web_secret_key: ""
 
 
 # Init script details
@@ -38,3 +38,4 @@ pass_environment_vars:
   - BiblioArchiveDir
   - BiblioDBPath
   - DJANGO_SETTINGS_MODULE
+  - BW_URL_PREFIX
