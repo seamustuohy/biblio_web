@@ -44,11 +44,16 @@
              width: 100%;
          }
         </style>
+        <script>
+            function fill_paragraphs(id) {
+            var element = document.querySelector(id).value
+            element.value = element.value.replace(/(?<!\n)(\r\n?|\n)(?!\n)/g, ' ')
+            }
     </head>
     <body>
         <div class="grid-container-element">
             <div class="grid-child-element left">
-                <h1>Archive Website</h1>
+                <h1>Update Item MetaData</h1>
                 <form method="post" novalidate>
                     {% csrf_token %}
                     {% include 'form_base.html' with form=form %}

@@ -20,6 +20,9 @@
       {% if field.errors %}
         {% if field.widget_type == 'checkbox' %}
           {% render_field field class="is-invalid" %}
+        {% elif field.widget_type == 'textarea' %}
+          {% render_field field class="form-control is-invalid" %}
+          <p onclick="fill_paragraphs({{ field.id_for_label }})">Unfill Paragraphs.</p>
         {% else %}
           {% render_field field class="form-control is-invalid" %}
         {% endif %}

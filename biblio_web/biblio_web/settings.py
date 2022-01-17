@@ -144,7 +144,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # Content-Security-Policy (CSP) Header
 MIDDLEWARE += ["csp.middleware.CSPMiddleware"]
 # Allow browsers to load bootstrap.min.css from cdn.jsdelivr.net
-CSP_STYLE_SRC = ["'self'", "cdn.jsdelivr.net"]
+CSP_STYLE_SRC = ["'self'", "cdn.jsdelivr.net", "'unsafe-inline'"]
 
 # Referrer-Policy Header
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
