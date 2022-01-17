@@ -127,18 +127,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-
-try:
-    archive_dir = os.environ["BiblioArchiveDir"]
-except KeyError as e:
-    raise RuntimeError("Could not find a BiblioArchiveDir in environment. This is needed to know where to serve static archive files from.") from e
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    archive_dir,
-]
-
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
