@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'widget_tweaks',
     'update_info',
+    'biblio_web'
 ]
 
 MIDDLEWARE = [
