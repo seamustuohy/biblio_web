@@ -50,7 +50,6 @@ def UpdateForm(request):
                     db = get_database(dbpath)
                     file_path = str(file_path)
                     # print(file_path)
-
                     initial_data = get_file_info_from_database(file_path, db)
                     db.close()
                     # print("INITIAL DATA")
@@ -63,6 +62,11 @@ def UpdateForm(request):
         except FileNotFoundError as _e:
             raise Http404
 
+    try:
+        archive_dir = environ["BiblioArchiveDir"]
+    except KeyError as e:
+        raise RuntimeError("Could not find a BiblioArchiveDir in environment. This is needed to know where to serve static archive files from.") from e
 
+    archive_path = file_path.removeprefix(archive_dir)
     return render(request, 'forms/update_form.html', {'form': form,
-                                                      'pdf': file_path})
+                                                      'pdf': archive_path})
