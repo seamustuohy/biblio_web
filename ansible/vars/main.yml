@@ -39,3 +39,4 @@ pass_environment_vars:
   - BiblioDBPath
   - DJANGO_SETTINGS_MODULE
   - BW_URL_PREFIX
+  - BW_CURRENT_HOST

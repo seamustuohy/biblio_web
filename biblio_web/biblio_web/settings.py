@@ -29,9 +29,11 @@ except KeyError as e:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
 
-
+try:
+    ALLOWED_HOSTS = [os.environ["BW_CURRENT_HOST"]]
+except KeyError as e:
+    raise RuntimeError("Could not find a BW_CURRENT_HOST in environment. This is used to set the allowed hosts.") from e
 
 # Application definition
 
