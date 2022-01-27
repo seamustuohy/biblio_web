@@ -2,6 +2,7 @@
   user:
     name: "{{ biblio_web_service_user }}"
     state: present
+    groups: "{{ biblio_group }}"
   register: bw_user_details
 
 - name: Create base srv directory
