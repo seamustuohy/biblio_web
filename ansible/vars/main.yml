@@ -5,6 +5,8 @@ biblio_etc_dir_path: "/etc/biblio_web/"
 biblio_web_venv_path: "{{ biblio_base_dir_path }}/virtualenv"
 biblio_web_env_file: "/etc/biblio_web/biblio_service.env"
 biblio_web_dir_path: "{{ biblio_base_dir_path }}/biblio_web"
+# biblio_web_static_archive_prefix: ""
+# biblio_web_static_assets_prefix: ""
 # biblio_archive_dir_path: ""
 
 ## Biblio library details
@@ -40,3 +42,5 @@ pass_environment_vars:
   - DJANGO_SETTINGS_MODULE
   - BW_URL_PREFIX
   - BW_CURRENT_HOST
+  - BiblioStaticArchivePrefix
+  - BiblioStaticAssetPrefix

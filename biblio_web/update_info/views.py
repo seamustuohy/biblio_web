@@ -66,7 +66,11 @@ def UpdateForm(request):
         archive_dir = environ["BiblioArchiveDir"]
     except KeyError as e:
         raise RuntimeError("Could not find a BiblioArchiveDir in environment. This is needed to know where to serve static archive files from.") from e
+    try:
+        archive_prefix = environ["BiblioStaticArchivePrefix"]
+    except KeyError as e:
+        raise RuntimeError("Could not find a BiblioArchiveDir in environment. This is needed to know where to serve static archive files from.") from e
 
-    archive_path = file_path.replace(archive_dir, '')
+    archive_path = file_path.replace(archive_dir, archive_prefix)
     return render(request, 'forms/update_form.html', {'form': form,
                                                       'pdf': archive_path})
