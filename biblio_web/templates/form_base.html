@@ -46,7 +46,7 @@
       <small class="form-text text-muted">{{ field.help_text }}</small>
     {% endif %}
     {% if field.widget_type == 'textarea' %}
-      <button type="button" class="unfill" id="button_{{ field.id_for_label }}" onclick="fill_paragraphs('#{{ field.id_for_label }}')">Unfill Paragraphs.</button>
+      <button type="button" class="unfill" id="button_{{ field.id_for_label }}">Unfill Paragraphs.</button>
     {% endif %}
     </div>
 {% endfor %}
