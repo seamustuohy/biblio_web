@@ -15,7 +15,7 @@ Type=simple
 EnvironmentFile=-{{ biblio_web_env_file }}
 # The "-" on the EnvironmentFile= line ensures that no error messages is generated if the environment file does not exist. Since many of these files were optional in sysvinit, you should include the "-" when using this directive.
 
-PassEnvironment={% for env in pass_environment_vars %} env{{ ", " if not loop.last else "" }}{% endfor %}
+PassEnvironment={% for env in pass_environment_vars %} {{ env }}{{ ", " if not loop.last else "" }}{% endfor %}
 
 
 
