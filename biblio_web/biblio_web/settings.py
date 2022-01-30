@@ -147,6 +147,9 @@ MIDDLEWARE += ["csp.middleware.CSPMiddleware"]
 # CSP_STYLE_SRC = ["'self'", "cdn.jsdelivr.net", "'unsafe-inline'"]
 CSP_STYLE_SRC = ["'self'", "cdn.jsdelivr.net"]
 CSP_SCRIPT_SRC = ["'self'"]
+# Allow browsers to load svg inline images from bootstrap.min.css from cdn.jsdelivr.net
+CSP_IMG_SRC = ["'self'", "cdn.jsdelivr.net"]
+
 
 
 # Referrer-Policy Header

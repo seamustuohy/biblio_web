@@ -1,5 +1,3 @@
-const unfillButtons = document.querySelectorAll("button.unfill")
-
 function fill_paragraphs(e) {
     var button_id = e.target.getAttribute('id')
     // Buttons are given the ID button_[ID-OF-TEXTAREA-THEY-MODIFY]
@@ -12,7 +10,11 @@ function fill_paragraphs(e) {
     element.value = element.value.replace(/(?<!\n)(\r\n?|\n)(?!\n)/g, ' ')
 }
 
-for (let i = 0; i < unfillButtons.length; i++) {
-    var btn = unfillButtons[i]
-    btn.addEventListener('click', fill_paragraphs);
+window.onload = function() {
+    console.log("I'm Running!!")
+    const unfillButtons = document.querySelectorAll("button.unfill")
+    for (let i = 0; i < unfillButtons.length; i++) {
+        var btn = unfillButtons[i]
+        btn.addEventListener('click', fill_paragraphs);
+    }
 }
