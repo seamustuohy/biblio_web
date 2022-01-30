@@ -44,3 +44,4 @@ pass_environment_vars:
   - BW_CURRENT_HOST
   - BiblioStaticArchivePrefix
   - BiblioStaticAssetPrefix
+  - BW_RECOLL_HOME

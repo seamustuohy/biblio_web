@@ -23,7 +23,13 @@ def UpdateForm(request):
             # Then we check to see if the form is valid (this is an automatic validation by Django)
             # if form.is_valid == True then do something
             # print("Form validation successful!")
-            file_path = request.GET.get('file_path', '')
+            path_q = request.POST.get('file_path', '')
+            # Make sure file is acceptable and in the proper place
+            file_path = Path(path_q).resolve()
+            file_path = file_path.resolve(strict=True)
+            if not file_path.parent.relative_to(environ['BiblioArchiveDir']):
+                raise FileNotFoundError("Invalid file path supplied")
+
             properties = form.cleaned_data
             # print(properties)
             # print("FILE PATH")
@@ -34,8 +40,21 @@ def UpdateForm(request):
             db = get_database(dbpath)
             try:
                 update_object_info(db, object_uid, properties)
-            except:
+            except Exception as e:
+                log.error(e, exc_info=True)
+                log.exception("Exception while attempting to update the object")
                 form.add_error(None, "An error occurred when attempting to update the object in the database.")
+            try:
+                recoll_home_path = "{0}/.recoll".format(environ['BW_RECOLL_HOME'])
+                success = subprocess.run(["/usr/bin/recollindex",
+                                          "-c", recoll_home_path,
+                                          "-e", "-i",
+                                          file_path)
+            except Exception as e:
+                log.error(e, exc_info=True)
+                log.exception("Exception while attempting to have recoll reindex changes")
+                form.add_error(None, "An error occurred when attempting to have recoll update its data with the updated object info.")
+
     elif request.method == "GET":
         try:
             path_q = request.GET.get('file_path', '')

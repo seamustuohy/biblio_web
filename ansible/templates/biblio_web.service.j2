@@ -15,11 +15,9 @@ Type=simple
 EnvironmentFile=-{{ biblio_web_env_file }}
 # The "-" on the EnvironmentFile= line ensures that no error messages is generated if the environment file does not exist. Since many of these files were optional in sysvinit, you should include the "-" when using this directive.
 
-PassEnvironment={% for env in pass_environment_vars %} {{ env }}{{ ", " if not loop.last else "" }}{% endfor %}
+PassEnvironment={% for env in pass_environment_vars %}{{ env }} {% endfor %}
 
-
-
-# Run under user recoll
+# Run under biblio web service user
 User={{ biblio_web_service_user }}
 
 # Set listen port and address as needed.
@@ -43,7 +41,7 @@ ProtectHome={{ biblio_web_sec_protect_home }}
 ProtectSystem={{ biblio_web_sec_protect_system }}
 ; Except the directories that we need to actually run this thing.
 ; This merely retains r/w access rights, it does not add any new. Must still be writable on the host! (So, make sure you have all the permissions set right!)
-ReadWriteDirectories= {{ biblio_archive_dir_path }} {{ biblio_web_dir_path }} {{ biblio_base_dir_path }} {{ biblio_etc_dir_path }}
+ReadWriteDirectories= {{ biblio_archive_dir_path }} {{ biblio_web_dir_path }} {{ biblio_base_dir_path }} {{ biblio_etc_dir_path }} {{ recoll_dir_path }}
 
 CapabilityBoundingSet={{ biblio_web_systemd_capabilities }}
 AmbientCapabilities={{ biblio_web_systemd_capabilities }}

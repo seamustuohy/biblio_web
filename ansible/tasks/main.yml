@@ -10,6 +10,13 @@
     groups: "{{ biblio_group }}"
   register: bw_user_details
 
+
+- name: adding biblio_web user to recoll group
+  user:
+    name: "{{ biblio_web_service_user }}"
+    groups: "{{ recoll_group }}"
+    append: yes
+
 - name: Create base srv directory
   file:
     path: "{{ biblio_base_dir_path }}"
