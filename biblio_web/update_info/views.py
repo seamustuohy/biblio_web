@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+import subprocess
 # Create your views here.
 from . import forms
 from . import utils
@@ -7,7 +7,7 @@ from os import environ
 from pathlib import Path
 from biblio.query import get_file_info_from_database
 from biblio.utils import get_database, get_file_id
-from biblio.update import update_object_info
+from biblio.update import update_object_info, mark_file_as_updated
 from django.http import Http404
 
 
@@ -23,12 +23,13 @@ def UpdateForm(request):
             # Then we check to see if the form is valid (this is an automatic validation by Django)
             # if form.is_valid == True then do something
             # print("Form validation successful!")
-            path_q = request.POST.get('file_path', '')
+            path_q = request.GET.get('file_path', '')
             # Make sure file is acceptable and in the proper place
             file_path = Path(path_q).resolve()
             file_path = file_path.resolve(strict=True)
             if not file_path.parent.relative_to(environ['BiblioArchiveDir']):
                 raise FileNotFoundError("Invalid file path supplied")
+            file_path = str(file_path)
 
             properties = form.cleaned_data
             # print(properties)
@@ -40,20 +41,11 @@ def UpdateForm(request):
             db = get_database(dbpath)
             try:
                 update_object_info(db, object_uid, properties)
+                mark_file_as_updated(db, file_path)
             except Exception as e:
                 log.error(e, exc_info=True)
                 log.exception("Exception while attempting to update the object")
                 form.add_error(None, "An error occurred when attempting to update the object in the database.")
-            try:
-                recoll_home_path = "{0}/.recoll".format(environ['BW_RECOLL_HOME'])
-                success = subprocess.run(["/usr/bin/recollindex",
-                                          "-c", recoll_home_path,
-                                          "-e", "-i",
-                                          file_path)
-            except Exception as e:
-                log.error(e, exc_info=True)
-                log.exception("Exception while attempting to have recoll reindex changes")
-                form.add_error(None, "An error occurred when attempting to have recoll update its data with the updated object info.")
 
     elif request.method == "GET":
         try:
