@@ -96,24 +96,22 @@
 
 # Create biblio tarball with `python3 setup.py sdist` in the biblio folder
 # Copy over to `ansible/files/Biblio.tar.gz` in the biblio_web folder when done.
-# - name: Copy over biblio tarball
-#   become_user: "{{ biblio_web_service_user }}"
-#   become: yes
-#   copy:
-#     src: "files/Biblio.tar.gz"
-#     dest: "/tmp/Biblio.tar.gz"
-#     owner: "{{ biblio_web_service_user }}"
-#     group: "{{ bw_user_details.group }}"
-#     mode: '0644'
+- name: Copy over biblio tarball
+  copy:
+    src: "files/Biblio.tar.gz"
+    dest: "/tmp/Biblio.tar.gz"
+    owner: "{{ biblio_web_service_user }}"
+    group: "{{ bw_user_details.group }}"
+    mode: '0644'
 
-# - name: Install biblio from local tarball package
-#   become_user: "{{ biblio_web_service_user }}"
-#   become: yes
-#   pip:
-#     name: "file:///tmp/Biblio.tar.gz"
-#     # executable: pip3
-#     virtualenv: "{{ biblio_web_venv_path }}"
-#     virtualenv_python: python3
+- name: Install biblio from local tarball package
+  become_user: "{{ biblio_web_service_user }}"
+  become: yes
+  pip:
+    name: "file:///tmp/Biblio.tar.gz"
+    # executable: pip3
+    virtualenv: "{{ biblio_web_venv_path }}"
+    virtualenv_python: python3
 
 # - name: Install Biblio from pip package
 

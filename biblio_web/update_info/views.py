@@ -6,8 +6,8 @@ from . import utils
 from os import environ
 from pathlib import Path
 from biblio.query import get_file_info_from_database
-from biblio.utils import get_database, get_file_id
-from biblio.update import update_object_info, mark_file_as_updated
+from biblio.utils import get_database, get_file_id, mark_file_as_updated
+from biblio.update import update_object_info
 from django.http import Http404
 
 
