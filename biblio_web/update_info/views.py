@@ -32,11 +32,12 @@ def UpdateForm(request):
             file_path = str(file_path)
 
             properties = form.cleaned_data
-            # print(properties)
-            # print("FILE PATH")
-            # print(file_path)
+            print(properties)
+            print("FILE PATH")
+            print(file_path)
             object_uid = get_file_id(file_path)
-            # print(object_uid)
+            print(file_path)
+            print(object_uid)
             dbpath = environ['BiblioDBPath']
             db = get_database(dbpath)
             try:

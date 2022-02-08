@@ -13,20 +13,21 @@ ul {
 }
 .grid-container-element {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 2fr;
     grid-gap: 20px;
 }
 .grid-child-element {
     max-width: 1000px ;
-    min-width: 50% ;
     margin: 10px ;
     padding: 10px ;
     //border: 1px solid gray ;
 }
 .grid-child-element.left {
+    min-width: 25% ;
     justify-self: flex-end;
 }
 .grid-child-element.right {
+    min-width: 75% ;
     justify-self: start;
 }
 .pdf_view {
